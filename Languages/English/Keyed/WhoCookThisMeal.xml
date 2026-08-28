@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <WCTM_CookedBy>Cooked by: {0}, Cooking level: {1}</WCTM_CookedBy>
+  <WCTM_CookedByLabel>Cook information</WCTM_CookedByLabel>
+  <WCTM_CookedByDesc>The colonist or mechanoid who made this meal and their Cooking level at the time.</WCTM_CookedByDesc>
+  <WCTM_MadeDeliciousFoodLabel>Made delicious food</WCTM_MadeDeliciousFoodLabel>
+  <WCTM_UnqualifiedCookLabel>Unqualified cook</WCTM_UnqualifiedCookLabel>
+  <WCTM_EaterNeedsUnqualifiedOpinion>Must be a cook with an "Unqualified cook" opinion.</WCTM_EaterNeedsUnqualifiedOpinion>
+  <WCTM_SingleCombatWinner>Winner: {0}</WCTM_SingleCombatWinner>
+  <WCTM_Cook>Cook</WCTM_Cook>
+  <WCTM_Eater>Eater</WCTM_Eater>
+</LanguageData>

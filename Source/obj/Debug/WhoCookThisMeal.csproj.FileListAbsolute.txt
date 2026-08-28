@@ -1,0 +1,9 @@
+D:\rimmod\whocookthismeal\Assemblies\WhoCookThisMeal.dll
+D:\rimmod\whocookthismeal\Assemblies\WhoCookThisMeal.pdb
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.csproj.AssemblyReference.cache
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.GeneratedMSBuildEditorConfig.editorconfig
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.AssemblyInfoInputs.cache
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.AssemblyInfo.cs
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.csproj.CoreCompileInputs.cache
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.dll
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.pdb

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>谁做的饭</name>
+  <author>August1st</author>
+  <packageId>whocookthismeal.plo</packageId>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <downloadUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</downloadUrl>
+    </li>
+  </modDependencies>
+  <description>tnnd谁做的饭！直接对罪犯进行一个溯源并且顷刻炼化。现在会标记食物的制作者和等级，做的好有奖励做不好有惩罚。如果一位殖民者吃下了有毒的食物，那他就可以去找对应的厨师发起单挑。兼容我的“吐出来”模组，触发识别有毒食物后依然可以找厨师单挑。</description>
+</ModMetaData>

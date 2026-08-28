@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>WhoCookThisMeal</RootNamespace>
+    <AssemblyName>WhoCookThisMeal</AssemblyName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RimWorldDir Condition="'$(RimWorldDir)' == ''">E:\SteamLibrary\steamapps\common\RimWorld</RimWorldDir>
+    <HarmonyDir Condition="'$(HarmonyDir)' == ''">E:\SteamLibrary\steamapps\workshop\content\294100\2009463077\Current</HarmonyDir>
+    <OutputPath>..\Assemblies\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" HintPath="$(RimWorldDir)\RimWorldWin64_Data\Managed\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(HarmonyDir)\Assemblies\0Harmony.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(RimWorldDir)\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll" Private="false" />
+  </ItemGroup>
+</Project>

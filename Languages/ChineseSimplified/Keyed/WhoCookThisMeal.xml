@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <WCTM_CookedBy>制作者：{0}，烹饪等级：{1}</WCTM_CookedBy>
+  <WCTM_CookedByLabel>烹饪信息</WCTM_CookedByLabel>
+  <WCTM_CookedByDesc>制作这份食物的殖民者或机械体，以及制作时的烹饪等级。</WCTM_CookedByDesc>
+  <WCTM_MadeDeliciousFoodLabel>做出了美味的食物</WCTM_MadeDeliciousFoodLabel>
+  <WCTM_UnqualifiedCookLabel>不合格的厨师</WCTM_UnqualifiedCookLabel>
+  <WCTM_EaterNeedsUnqualifiedOpinion>必须有一名获得糟糕评价的厨师。</WCTM_EaterNeedsUnqualifiedOpinion>
+  <WCTM_SingleCombatWinner>获胜者：{0}</WCTM_SingleCombatWinner>
+  <WCTM_Cook>厨师</WCTM_Cook>
+  <WCTM_Eater>食客</WCTM_Eater>
+</LanguageData>
