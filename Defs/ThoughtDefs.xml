@@ -14,7 +14,7 @@
   <ThoughtDef>
     <defName>WCTM_UnqualifiedCook</defName>
     <thoughtClass>Thought_MemorySocial</thoughtClass>
-    <durationDays>999999</durationDays>
+    <durationDays>30000</durationDays>
     <replaceThoughts>
       <li>WCTM_MadeDeliciousFood</li>
     </replaceThoughts>
@@ -64,6 +64,12 @@
     <defName>WCTM_ChefLost</defName>
     <durationDays>1</durationDays>
     <stages><li><baseMoodEffect>-1</baseMoodEffect><label>吃什么</label><description>厨师输了我们吃什么</description></li></stages>
+  </ThoughtDef>
+  <ThoughtDef>
+    <defName>WCTM_SingleCombatFullMeal</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stages><li><baseMoodEffect>10</baseMoodEffect><label>我吃饱了</label><description>多谢款待）</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_EaterLost</defName>

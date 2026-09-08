@@ -7,6 +7,7 @@
   <WCTM_UnqualifiedCookLabel>Unqualified cook</WCTM_UnqualifiedCookLabel>
   <WCTM_EaterNeedsUnqualifiedOpinion>Must be a cook with an "Unqualified cook" opinion.</WCTM_EaterNeedsUnqualifiedOpinion>
   <WCTM_SingleCombatWinner>Winner: {0}</WCTM_SingleCombatWinner>
+  <WCTM_SingleCombatDraw>Draw.</WCTM_SingleCombatDraw>
   <WCTM_Cook>Cook</WCTM_Cook>
   <WCTM_Eater>Eater</WCTM_Eater>
 </LanguageData>

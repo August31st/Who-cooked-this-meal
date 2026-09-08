@@ -104,6 +104,18 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
     public RitualOutcomeEffectWorkerWCTMSingleCombat() { }
     public RitualOutcomeEffectWorkerWCTMSingleCombat(RitualOutcomeEffectDef def) : base(def) { }
 
+    public override RitualOutcomePossibility GetOutcome(float quality, LordJob_Ritual ritual)
+    {
+        Pawn cook = RitualOutcomeCompWCTMSkillDifference.GetAssignedPawn(ritual, "cook");
+        Pawn eater = RitualOutcomeCompWCTMSkillDifference.GetAssignedPawn(ritual, "eater");
+        if (ritual is LordJob_WCTMSingleCombatDuel && cook != null && eater != null && !cook.DeadOrDowned && !eater.DeadOrDowned)
+        {
+            return def.outcomeChances.First(outcome => outcome.positivityIndex == 3);
+        }
+
+        return base.GetOutcome(quality, ritual);
+    }
+
     protected override void ApplyExtraOutcome(Dictionary<Pawn, int> presence, LordJob_Ritual ritual, RitualOutcomePossibility outcome, out string extraOutcomeDesc, ref LookTargets letterLookTargets)
     {
         extraOutcomeDesc = null;
@@ -116,9 +128,12 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
         int cookMelee = cook.skills.GetSkill(SkillDefOf.Melee).Level;
         int eaterMelee = eater.skills.GetSkill(SkillDefOf.Melee).Level;
         float cookWinChance = cookMelee + eaterMelee == 0 ? 0.5f : (float)cookMelee / (cookMelee + eaterMelee);
+        bool draw = !cook.DeadOrDowned && !eater.DeadOrDowned;
         Pawn loser = GetLoser(cook, eater, cookWinChance, ritual);
-        Pawn winner = loser == cook ? eater : cook;
-        extraOutcomeDesc = "WCTM_SingleCombatWinner".Translate(winner.LabelShortCap);
+        Pawn winner = draw ? null : loser == cook ? eater : cook;
+        extraOutcomeDesc = draw
+            ? "WCTM_SingleCombatDraw".Translate()
+            : "WCTM_SingleCombatWinner".Translate(winner.LabelShortCap);
 
         foreach (Pawn pawn in presence.Keys)
         {
@@ -126,10 +141,13 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
             if (outcome.positivityIndex == 3) pawn.skills?.Learn(SkillDefOf.Melee, pawn == cook || pawn == eater ? 5000f : 2000f);
         }
 
-        if (!(ritual is LordJob_WCTMSingleCombatDuel))
+        if (!draw)
         {
-            if (loser == cook) WhoCookThisMealMod.AddCookAbasia(cook);
-            else
+            if (loser == cook)
+            {
+                WhoCookThisMealMod.AddCarefulCooking(cook);
+            }
+            else if (!(ritual is LordJob_WCTMSingleCombatDuel))
             {
                 Hediff abasia = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Abasia"), eater);
                 abasia.TryGetComp<HediffComp_Disappears>()?.SetDuration(60000);
@@ -140,6 +158,14 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
             DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_UnqualifiedCook"), cook);
         eater.needs?.mood?.thoughts?.memories.RemoveMemoriesOfDefWhereOtherPawnIs(
             DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_MechMealPoisoning"), cook);
+        if (draw)
+        {
+            ThoughtDef fullMeal = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_SingleCombatFullMeal");
+            cook.needs?.mood?.thoughts?.memories.TryGainMemory(fullMeal);
+            eater.needs?.mood?.thoughts?.memories.TryGainMemory(fullMeal);
+            return;
+        }
+
         if (winner == eater)
         {
             ThoughtDef thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_ChefLost");

@@ -43,6 +43,12 @@
     <defName>WCTM_CarefulCooking</defName>
     <label>小心烹饪</label>
     <description>制作的食物不会触发食物中毒。</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>180000</disappearsAfterTicks>
+      </li>
+    </comps>
   </HediffDef>
   <HediffDef>
     <defName>WCTM_MechCookingUpgrade</defName>
@@ -66,7 +72,7 @@
       <li>
         <grains>
           <li Class="AudioGrain_Clip">
-            <clipPath>raininlove</clipPath>
+            <clipPath>aizo</clipPath>
           </li>
         </grains>
       </li>
@@ -141,7 +147,7 @@
       <li>
         <defaultDuty>SpectateCircle</defaultDuty>
         <spectateDistanceOverride>5~7</spectateDistanceOverride>
-        <endTriggers><li Class="StageEndTrigger_DurationPercentage"><percentage>0.33</percentage></li></endTriggers>
+        <endTriggers><li Class="StageEndTrigger_DurationPercentage"><percentage>0.15</percentage></li></endTriggers>
         <roleBehaviors>
           <li><roleId>cook</roleId><dutyDef>Idle</dutyDef></li>
           <li><roleId>eater</roleId><dutyDef>Idle</dutyDef></li>
@@ -200,6 +206,6 @@
     <ritualOutcomeEffect>WCTM_SingleCombat</ritualOutcomeEffect>
   </RitualPatternDef>
   <PreceptDef>
-    <defName>WCTM_SingleCombat</defName><label>单挑</label><description>厨师和食客进行一场不造成战斗伤害的单挑。</description><issue>Ritual</issue><impact>Medium</impact><preceptClass>Precept_Ritual</preceptClass><ritualPatternBase>WCTM_SingleCombat</ritualPatternBase>
+    <defName>WCTM_SingleCombat</defName><label>单挑</label><description>厨师和食客进行一场不造成战斗伤害的单挑。</description><issue>Ritual</issue><impact>Medium</impact><preceptClass>Precept_Ritual</preceptClass><ritualPatternBase>WCTM_SingleCombat</ritualPatternBase><useRepeatPenalty>false</useRepeatPenalty>
   </PreceptDef>
 </Defs>

@@ -13,7 +13,6 @@ public sealed class WhoCookThisMealMod : Mod
     private static readonly Dictionary<Thing, CookRecord> fallbackRecords = new Dictionary<Thing, CookRecord>();
     private static readonly HashSet<IngestionRecord> poisonedMeals = new HashSet<IngestionRecord>();
     private static readonly HashSet<IngestionRecord> blockedPoisoning = new HashSet<IngestionRecord>();
-    private static readonly HashSet<Pawn> cooksToRewardAfterAnesthetic = new HashSet<Pawn>();
 
     public WhoCookThisMealMod(ModContentPack content) : base(content)
     {
@@ -39,9 +38,6 @@ public sealed class WhoCookThisMealMod : Mod
         harmony.Patch(
             AccessTools.Method(typeof(FoodUtility), nameof(FoodUtility.AddFoodPoisoningHediff)),
             prefix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(BlockPoisoningForCarefulCook)));
-        harmony.Patch(
-            AccessTools.Method(typeof(HediffComp_Disappears), nameof(HediffComp_Disappears.CompPostPostRemoved)),
-            postfix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(RewardCookAfterAnesthetic)));
     }
 
     public override string SettingsCategory() => Content.Name;
@@ -141,26 +137,14 @@ public sealed class WhoCookThisMealMod : Mod
         return false;
     }
 
-    internal static void AddCookAbasia(Pawn cook)
+    internal static void AddCarefulCooking(Pawn cook)
     {
-        Hediff abasia = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Abasia"), cook);
-        HediffComp_Disappears disappears = abasia.TryGetComp<HediffComp_Disappears>();
-        disappears?.SetDuration(60000);
-        cooksToRewardAfterAnesthetic.Add(cook);
-        cook.health.AddHediff(abasia);
-    }
-
-    private static void RewardCookAfterAnesthetic(HediffComp_Disappears __instance)
-    {
-        if (__instance.parent.def.defName != "Abasia" || !cooksToRewardAfterAnesthetic.Remove(__instance.Pawn))
-        {
-            return;
-        }
-
         HediffDef carefulCooking = DefDatabase<HediffDef>.GetNamedSilentFail("WCTM_CarefulCooking");
-        if (carefulCooking != null && !__instance.Pawn.health.hediffSet.HasHediff(carefulCooking))
+        if (carefulCooking != null && cook?.health?.hediffSet != null && !cook.health.hediffSet.HasHediff(carefulCooking))
         {
-            __instance.Pawn.health.AddHediff(HediffMaker.MakeHediff(carefulCooking, __instance.Pawn));
+            Hediff buff = HediffMaker.MakeHediff(carefulCooking, cook);
+            buff.TryGetComp<HediffComp_Disappears>()?.SetDuration(180000);
+            cook.health.AddHediff(buff);
         }
     }
 

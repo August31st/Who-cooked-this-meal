@@ -7,6 +7,7 @@
   <WCTM_UnqualifiedCookLabel>不合格的厨师</WCTM_UnqualifiedCookLabel>
   <WCTM_EaterNeedsUnqualifiedOpinion>必须有一名获得糟糕评价的厨师。</WCTM_EaterNeedsUnqualifiedOpinion>
   <WCTM_SingleCombatWinner>获胜者：{0}</WCTM_SingleCombatWinner>
+  <WCTM_SingleCombatDraw>双方平手。</WCTM_SingleCombatDraw>
   <WCTM_Cook>厨师</WCTM_Cook>
   <WCTM_Eater>食客</WCTM_Eater>
 </LanguageData>
