@@ -7,3 +7,4 @@ D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.AssemblyInfo.cs
 D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.csproj.CoreCompileInputs.cache
 D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.dll
 D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.pdb
+D:\rimmod\whocookthismeal\Source\obj\Debug\WhoCookThisMeal.sourcelink.json

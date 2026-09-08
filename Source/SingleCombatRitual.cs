@@ -3,6 +3,8 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Verse.AI;
+using Verse.AI.Group;
 using Verse.Sound;
 
 namespace WhoCookThisMeal;
@@ -14,7 +16,7 @@ public sealed class RitualRoleWCTMCook : RitualRoleColonist
         if (!base.AppliesToPawn(pawn, out reason, target, ritual, assignments, precept, skipReason)) return false;
         bool valid = Find.CurrentMap?.mapPawns?.FreeColonistsSpawned.Any(eater =>
             eater != pawn && eater.needs?.mood?.thoughts?.memories?.Memories.Any(memory =>
-                memory.def.defName == "WCTM_UnqualifiedCook" && memory.otherPawn == pawn) == true) == true;
+                WCTMSingleCombatThoughts.IsNegativeCookingMemory(memory, pawn)) == true) == true;
         if (!valid && !skipReason) reason = "WCTM_EaterNeedsUnqualifiedOpinion".Translate();
         return valid;
     }
@@ -26,7 +28,16 @@ public sealed class RitualRoleWCTMEater : RitualRoleColonist
     {
         if (!base.AppliesToPawn(pawn, out reason, target, ritual, assignments, precept, skipReason)) return false;
         Pawn cook = assignments?.FirstAssignedPawn(assignments.GetRole("cook"));
-        return cook == null || pawn != cook && pawn.needs?.mood?.thoughts?.memories?.Memories.Any(memory => memory.def.defName == "WCTM_UnqualifiedCook" && memory.otherPawn == cook) == true;
+        return cook == null || pawn != cook && pawn.needs?.mood?.thoughts?.memories?.Memories.Any(memory => WCTMSingleCombatThoughts.IsNegativeCookingMemory(memory, cook)) == true;
+    }
+
+}
+
+internal static class WCTMSingleCombatThoughts
+{
+    public static bool IsNegativeCookingMemory(Thought_Memory memory, Pawn cook)
+    {
+        return (memory.def.defName == "WCTM_UnqualifiedCook" || memory.def.defName == "WCTM_MechMealPoisoning") && memory.otherPawn == cook;
     }
 }
 
@@ -38,10 +49,26 @@ public sealed class RitualBehaviorWorkerWCTMSingleCombat : RitualBehaviorWorker
     public RitualBehaviorWorkerWCTMSingleCombat(RitualBehaviorDef def) : base(def) { }
     public override Sustainer SoundPlaying => sound;
 
+    protected override LordJob CreateLordJob(TargetInfo target, Pawn organizer, Precept_Ritual ritual, RitualObligation obligation, RitualRoleAssignments assignments)
+    {
+        if (!WhoCookThisMealMod.Settings.PeacefulSingleCombat)
+        {
+            RitualBehaviorDef duelBehavior = DefDatabase<RitualBehaviorDef>.GetNamedSilentFail("WCTM_SingleCombatDuel");
+            List<RitualStage> duelStages = duelBehavior?.stages ?? def.stages;
+            return new LordJob_WCTMSingleCombatDuel(target, ritual, obligation, duelStages, assignments, organizer);
+        }
+
+        return base.CreateLordJob(target, organizer, ritual, obligation, assignments);
+    }
+
     public override void Tick(LordJob_Ritual ritual)
     {
-        SoundDef soundDef = DefDatabase<SoundDef>.GetNamedSilentFail("WCTM_SingleCombatMusic");
-        if (sound == null || sound.Ended) sound = soundDef?.TrySpawnSustainer(SoundInfo.InMap(new TargetInfo(ritual.Spot, ritual.Map), MaintenanceType.PerTick));
+        if (sound == null || sound.Ended)
+        {
+            string soundName = Rand.Bool ? "WCTM_SingleCombatMusic" : "WCTM_SingleCombatMusicAlt";
+            SoundDef soundDef = DefDatabase<SoundDef>.GetNamedSilentFail(soundName);
+            sound = soundDef?.TrySpawnSustainer(SoundInfo.InMap(new TargetInfo(ritual.Spot, ritual.Map), MaintenanceType.PerTick));
+        }
         sound?.Maintain();
     }
 
@@ -89,7 +116,7 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
         int cookMelee = cook.skills.GetSkill(SkillDefOf.Melee).Level;
         int eaterMelee = eater.skills.GetSkill(SkillDefOf.Melee).Level;
         float cookWinChance = cookMelee + eaterMelee == 0 ? 0.5f : (float)cookMelee / (cookMelee + eaterMelee);
-        Pawn loser = Rand.Chance(cookWinChance) ? eater : cook;
+        Pawn loser = GetLoser(cook, eater, cookWinChance, ritual);
         Pawn winner = loser == cook ? eater : cook;
         extraOutcomeDesc = "WCTM_SingleCombatWinner".Translate(winner.LabelShortCap);
 
@@ -99,13 +126,20 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
             if (outcome.positivityIndex == 3) pawn.skills?.Learn(SkillDefOf.Melee, pawn == cook || pawn == eater ? 5000f : 2000f);
         }
 
-        if (loser == cook) WhoCookThisMealMod.AddCookAbasia(cook);
-        else
+        if (!(ritual is LordJob_WCTMSingleCombatDuel))
         {
-            Hediff abasia = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Abasia"), eater);
-            abasia.TryGetComp<HediffComp_Disappears>()?.SetDuration(60000);
-            eater.health.AddHediff(abasia);
+            if (loser == cook) WhoCookThisMealMod.AddCookAbasia(cook);
+            else
+            {
+                Hediff abasia = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Abasia"), eater);
+                abasia.TryGetComp<HediffComp_Disappears>()?.SetDuration(60000);
+                eater.health.AddHediff(abasia);
+            }
         }
+        eater.needs?.mood?.thoughts?.memories.RemoveMemoriesOfDefWhereOtherPawnIs(
+            DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_UnqualifiedCook"), cook);
+        eater.needs?.mood?.thoughts?.memories.RemoveMemoriesOfDefWhereOtherPawnIs(
+            DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_MechMealPoisoning"), cook);
         if (winner == eater)
         {
             ThoughtDef thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_ChefLost");
@@ -116,6 +150,97 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
             ThoughtDef thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_EaterLost");
             eater.needs?.mood?.thoughts?.memories.TryGainMemory(thought, cook);
         }
+    }
+
+    private static Pawn GetLoser(Pawn cook, Pawn eater, float cookWinChance, LordJob_Ritual ritual)
+    {
+        if (ritual is LordJob_WCTMSingleCombatDuel && cook.DeadOrDowned != eater.DeadOrDowned)
+        {
+            return cook.DeadOrDowned ? cook : eater;
+        }
+
+        return Rand.Chance(cookWinChance) ? eater : cook;
+    }
+}
+
+public sealed class JobGiver_WCTMSafeDuel : JobGiver_Duel
+{
+    protected override Job TryGiveJob(Pawn pawn)
+    {
+        LordJob_Ritual_Duel duel = pawn.GetLord()?.LordJob as LordJob_Ritual_Duel;
+        if (duel == null || duel.Opponent(pawn)?.DeadOrDowned == true)
+        {
+            return null;
+        }
+
+        return base.TryGiveJob(pawn);
+    }
+
+    protected override Job MeleeAttackJob(Pawn pawn, Thing enemyTarget)
+    {
+        Job job = base.MeleeAttackJob(pawn, enemyTarget);
+        job.killIncappedTarget = false;
+        return job;
+    }
+}
+
+public sealed class LordJob_WCTMSingleCombatDuel : LordJob_Ritual_Duel
+{
+    public LordJob_WCTMSingleCombatDuel() { }
+
+    public LordJob_WCTMSingleCombatDuel(TargetInfo selectedTarget, Precept_Ritual ritual, RitualObligation obligation, List<RitualStage> allStages, RitualRoleAssignments assignments, Pawn organizer = null)
+        : base(selectedTarget, ritual, obligation, allStages, assignments, null)
+    {
+        AddDuelist(assignments, "cook");
+        AddDuelist(assignments, "eater");
+    }
+
+    private void AddDuelist(RitualRoleAssignments assignments, string roleId)
+    {
+        Pawn pawn = assignments.FirstAssignedPawn(assignments.GetRole(roleId));
+        if (pawn == null)
+        {
+            return;
+        }
+
+        duelists.Add(pawn);
+        pawnsDeathIgnored.Add(pawn);
+    }
+
+    protected override bool ShouldCallOffBecausePawnNoLongerOwned(Pawn pawn)
+    {
+        return !duelists.Contains(pawn) && base.ShouldCallOffBecausePawnNoLongerOwned(pawn);
+    }
+
+    public override bool ShouldRemovePawn(Pawn pawn, PawnLostCondition reason)
+    {
+        if (duelists.Contains(pawn) && reason == PawnLostCondition.Incapped)
+        {
+            return false;
+        }
+
+        return base.ShouldRemovePawn(pawn, reason);
+    }
+
+    public override bool DutyActiveWhenDown(Pawn pawn)
+    {
+        return duelists.Contains(pawn) || base.DutyActiveWhenDown(pawn);
+    }
+
+    protected override IEnumerable<Trigger> CallOffTriggers()
+    {
+        yield return new Trigger_TickCondition(() => ShouldBeCalledOff(), 1);
+        yield return new Trigger_Signal(CancelSignal);
+    }
+
+    protected override bool RitualFinished(float progress, bool cancelled)
+    {
+        if (!cancelled && duelists.Any(pawn => pawn.DeadOrDowned))
+        {
+            return true;
+        }
+
+        return base.RitualFinished(progress, cancelled);
     }
 }
 

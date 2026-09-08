@@ -9,6 +9,7 @@ namespace WhoCookThisMeal;
 
 public sealed class WhoCookThisMealMod : Mod
 {
+    public static WhoCookThisMealSettings Settings { get; private set; }
     private static readonly Dictionary<Thing, CookRecord> fallbackRecords = new Dictionary<Thing, CookRecord>();
     private static readonly HashSet<IngestionRecord> poisonedMeals = new HashSet<IngestionRecord>();
     private static readonly HashSet<IngestionRecord> blockedPoisoning = new HashSet<IngestionRecord>();
@@ -16,6 +17,7 @@ public sealed class WhoCookThisMealMod : Mod
 
     public WhoCookThisMealMod(ModContentPack content) : base(content)
     {
+        Settings = GetSettings<WhoCookThisMealSettings>();
         AddComponentToMealDefs();
 
         var harmony = new Harmony("whocookthismeal");
@@ -40,6 +42,21 @@ public sealed class WhoCookThisMealMod : Mod
         harmony.Patch(
             AccessTools.Method(typeof(HediffComp_Disappears), nameof(HediffComp_Disappears.CompPostPostRemoved)),
             postfix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(RewardCookAfterAnesthetic)));
+    }
+
+    public override string SettingsCategory() => Content.Name;
+
+    public override void DoSettingsWindowContents(Rect inRect)
+    {
+        Listing_Standard listing = new Listing_Standard();
+        listing.Begin(inRect);
+        bool peaceful = Settings.PeacefulSingleCombat;
+        listing.CheckboxLabeled("和平单挑", ref Settings.PeacefulSingleCombat, "取消勾选后使用原版决斗动作并造成真实战斗伤害。");
+        if (peaceful != Settings.PeacefulSingleCombat)
+        {
+            Settings.Write();
+        }
+        listing.End();
     }
 
     private static void EnsureMealComponent(ThingWithComps __instance)
@@ -79,7 +96,7 @@ public sealed class WhoCookThisMealMod : Mod
             return;
         }
 
-        fallbackRecords[__instance] = new CookRecord(pawn, pawn.skills?.GetSkill(SkillDefOf.Cooking)?.Level ?? 0);
+        fallbackRecords[__instance] = new CookRecord(pawn, CompCookInfo.GetCookingLevel(pawn));
         __instance.TryGetComp<CompCookInfo>()?.SetCook(pawn);
     }
 
@@ -97,12 +114,12 @@ public sealed class WhoCookThisMealMod : Mod
 
     private static void MarkFoodPoisoning(Pawn pawn, Thing ingestible)
     {
-        if (TryGetEligibleCook(ingestible, pawn, out _) && blockedPoisoning.Remove(new IngestionRecord(pawn, ingestible)))
+        if (TryGetMealCook(ingestible, pawn, out _) && blockedPoisoning.Remove(new IngestionRecord(pawn, ingestible)))
         {
             return;
         }
 
-        if (TryGetEligibleCook(ingestible, pawn, out _))
+        if (TryGetMealCook(ingestible, pawn, out _))
         {
             poisonedMeals.Add(new IngestionRecord(pawn, ingestible));
         }
@@ -110,13 +127,13 @@ public sealed class WhoCookThisMealMod : Mod
 
     private static bool BlockPoisoningForCarefulCook(Pawn pawn, Thing ingestible)
     {
-        HediffDef carefulCooking = DefDatabase<HediffDef>.GetNamedSilentFail("WCTM_CarefulCooking");
-        if (carefulCooking == null || ingestible?.TryGetComp<CompCookInfo>()?.Cook?.health?.hediffSet.GetFirstHediffOfDef(carefulCooking) == null)
+        Pawn cook = ingestible?.TryGetComp<CompCookInfo>()?.Cook;
+        if (!HasSafeCookingHediff(cook))
         {
             return true;
         }
 
-        if (TryGetEligibleCook(ingestible, pawn, out _))
+        if (TryGetMealCook(ingestible, pawn, out _))
         {
             blockedPoisoning.Add(new IngestionRecord(pawn, ingestible));
         }
@@ -149,15 +166,66 @@ public sealed class WhoCookThisMealMod : Mod
 
     private static void ResolveIngestion(Thing __instance, Pawn ingester)
     {
-        if (!TryGetEligibleCook(__instance, ingester, out Pawn cook))
+        if (!TryGetMealCook(__instance, ingester, out Pawn cook))
         {
             return;
         }
 
         bool poisoned = poisonedMeals.Remove(new IngestionRecord(ingester, __instance));
+        if (cook.IsColonyMech)
+        {
+            if (poisoned)
+            {
+                ResolveMechPoisoning(cook, ingester);
+            }
+
+            return;
+        }
+
         string thoughtName = poisoned ? "WCTM_UnqualifiedCook" : "WCTM_MadeDeliciousFood";
         ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail(thoughtName);
         ingester.needs?.mood?.thoughts?.memories.TryGainMemory(thoughtDef, cook);
+    }
+
+    private static void ResolveMechPoisoning(Pawn mech, Pawn ingester)
+    {
+        Pawn mechanitor = mech.GetOverseer();
+        if (mechanitor == null)
+        {
+            return;
+        }
+
+        if (ingester != mechanitor)
+        {
+            ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_MechMealPoisoning");
+            ingester.needs?.mood?.thoughts?.memories.TryGainMemory(thoughtDef, mechanitor);
+            return;
+        }
+
+        HediffDef upgrade = DefDatabase<HediffDef>.GetNamedSilentFail("WCTM_MechCookingUpgrade");
+        if (upgrade != null && !mech.health.hediffSet.HasHediff(upgrade))
+        {
+            mech.health.AddHediff(HediffMaker.MakeHediff(upgrade, mech));
+        }
+    }
+
+    private static bool HasSafeCookingHediff(Pawn cook)
+    {
+        if (cook?.health?.hediffSet == null)
+        {
+            return false;
+        }
+
+        return cook.health.hediffSet.GetFirstHediffOfDef(DefDatabase<HediffDef>.GetNamedSilentFail("WCTM_CarefulCooking")) != null ||
+            cook.health.hediffSet.GetFirstHediffOfDef(DefDatabase<HediffDef>.GetNamedSilentFail("WCTM_MechCookingUpgrade")) != null;
+    }
+
+    private static bool TryGetMealCook(Thing meal, Pawn ingester, out Pawn cook)
+    {
+        cook = meal?.TryGetComp<CompCookInfo>()?.Cook;
+        return meal?.def.ingestible?.IsMeal == true &&
+            ingester != null && ingester.Faction == Faction.OfPlayer && ingester.IsColonist &&
+            cook != ingester && IsColonyMaker(cook);
     }
 
     private static bool TryGetEligibleCook(Thing meal, Pawn ingester, out Pawn cook)

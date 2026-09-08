@@ -14,7 +14,7 @@
   <ThoughtDef>
     <defName>WCTM_UnqualifiedCook</defName>
     <thoughtClass>Thought_MemorySocial</thoughtClass>
-    <durationDays>3</durationDays>
+    <durationDays>999999</durationDays>
     <replaceThoughts>
       <li>WCTM_MadeDeliciousFood</li>
     </replaceThoughts>
@@ -26,37 +26,48 @@
     </stages>
   </ThoughtDef>
   <ThoughtDef>
+    <defName>WCTM_MechMealPoisoning</defName>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <durationDays>3</durationDays>
+    <stages>
+      <li>
+        <baseOpinionOffset>-10</baseOpinionOffset>
+        <labelSocial>你的机械体做的饭有毒！</labelSocial>
+      </li>
+    </stages>
+  </ThoughtDef>
+  <ThoughtDef>
     <defName>WCTM_SingleCombatBoring</defName>
     <thoughtClass>Thought_AttendedRitual</thoughtClass>
     <durationDays>7</durationDays>
-    <stages><li><baseMoodEffect>-6</baseMoodEffect><label>无聊的儿戏，我要看到血流成河！</label><description>无聊的儿戏，我要看到血流成河！</description></li></stages>
+    <stages><li><baseMoodEffect>-6</baseMoodEffect><label>无聊</label><description>无聊的儿戏，我要看到血流成河！</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_SingleCombatPlain</defName>
     <thoughtClass>Thought_AttendedRitual</thoughtClass>
     <durationDays>7</durationDays>
-    <stages><li><baseMoodEffect>-2</baseMoodEffect><label>这样就结束了吗</label><description>这样就结束了吗</description></li></stages>
+    <stages><li><baseMoodEffect>-2</baseMoodEffect><label>平淡</label><description>这样就结束了吗</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_SingleCombatExciting</defName>
     <thoughtClass>Thought_AttendedRitual</thoughtClass>
     <durationDays>7</durationDays>
-    <stages><li><baseMoodEffect>5</baseMoodEffect><label>劲啊，这才是我要的口牙！</label><description>劲啊，这才是我要的口牙！</description></li></stages>
+    <stages><li><baseMoodEffect>5</baseMoodEffect><label>精彩</label><description>劲啊，这才是我要的口牙！</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_SingleCombatUnforgettable</defName>
     <thoughtClass>Thought_AttendedRitual</thoughtClass>
     <durationDays>7</durationDays>
-    <stages><li><baseMoodEffect>10</baseMoodEffect><label>落花之情，还不错吧。</label><description>落花之情，还不错吧。</description></li></stages>
+    <stages><li><baseMoodEffect>10</baseMoodEffect><label>难忘</label><description>我大概，永远不会忘记你们吧。</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_ChefLost</defName>
     <durationDays>1</durationDays>
-    <stages><li><baseMoodEffect>-1</baseMoodEffect><label>厨师输了我们吃什么</label><description>厨师输了我们吃什么</description></li></stages>
+    <stages><li><baseMoodEffect>-1</baseMoodEffect><label>吃什么</label><description>厨师输了我们吃什么</description></li></stages>
   </ThoughtDef>
   <ThoughtDef>
     <defName>WCTM_EaterLost</defName>
     <durationDays>1</durationDays>
-    <stages><li><baseMoodEffect>-10</baseMoodEffect><label>自取其辱了</label><description>自取其辱了</description></li></stages>
+    <stages><li><baseMoodEffect>-10</baseMoodEffect><label>耻辱</label><description>自取其辱了</description></li></stages>
   </ThoughtDef>
 </Defs>

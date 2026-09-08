@@ -24,7 +24,17 @@ public sealed class CompCookInfo : ThingComp
     public void SetCook(Pawn worker)
     {
         cook = worker;
-        cookingLevel = worker.skills?.GetSkill(SkillDefOf.Cooking)?.Level ?? 0;
+        cookingLevel = GetCookingLevel(worker);
+    }
+
+    internal static int GetCookingLevel(Pawn worker)
+    {
+        if (worker?.IsColonyMech == true)
+        {
+            return worker.RaceProps.mechFixedSkillLevel;
+        }
+
+        return worker?.skills?.GetSkill(SkillDefOf.Cooking)?.Level ?? 0;
     }
 
     public override void PostExposeData()

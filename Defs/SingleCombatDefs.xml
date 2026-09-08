@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <DutyDef>
+    <defName>WCTM_SingleCombatDuel</defName>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <li Class="WhoCookThisMeal.JobGiver_WCTMSafeDuel" />
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
+  <DutyDef>
     <defName>WCTM_SingleCombatStand</defName>
     <thinkNode Class="ThinkNode_Priority">
       <subNodes>
@@ -36,6 +44,17 @@
     <label>小心烹饪</label>
     <description>制作的食物不会触发食物中毒。</description>
   </HediffDef>
+  <HediffDef>
+    <defName>WCTM_MechCookingUpgrade</defName>
+    <label>厨艺芯片超频</label>
+    <description>这台机械体的厨艺芯片已超频，制作的食物不会触发食物中毒。</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>60000</disappearsAfterTicks>
+      </li>
+    </comps>
+  </HediffDef>
   <SoundDef>
     <defName>WCTM_SingleCombatMusic</defName>
     <context>MapOnly</context>
@@ -48,6 +67,23 @@
         <grains>
           <li Class="AudioGrain_Clip">
             <clipPath>raininlove</clipPath>
+          </li>
+        </grains>
+      </li>
+    </subSounds>
+  </SoundDef>
+  <SoundDef>
+    <defName>WCTM_SingleCombatMusicAlt</defName>
+    <context>MapOnly</context>
+    <maxVoices>1</maxVoices>
+    <priorityMode>PrioritizeNearest</priorityMode>
+    <sustain>true</sustain>
+    <eventNames />
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>aizo</clipPath>
           </li>
         </grains>
       </li>
@@ -85,6 +121,54 @@
               <li Class="WhoCookThisMeal.RitualPositionWCTMSide">
                 <side>1</side>
               </li>
+            </customPositions>
+          </li>
+        </roleBehaviors>
+      </li>
+    </stages>
+    <spectatorsLabel>旁观者</spectatorsLabel>
+    <spectatorGerund>观看单挑</spectatorGerund>
+  </RitualBehaviorDef>
+  <RitualBehaviorDef>
+    <defName>WCTM_SingleCombatDuel</defName>
+    <workerClass>WhoCookThisMeal.RitualBehaviorWorkerWCTMSingleCombat</workerClass>
+    <durationTicks>5000~5000</durationTicks>
+    <roles>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMCook"><label>厨师</label><categoryLabel>厨师</categoryLabel><id>cook</id><required>true</required><maxCount>1</maxCount></li>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMEater"><label>食客</label><categoryLabel>食客</categoryLabel><id>eater</id><required>true</required><maxCount>1</maxCount></li>
+    </roles>
+    <stages>
+      <li>
+        <defaultDuty>SpectateCircle</defaultDuty>
+        <spectateDistanceOverride>5~7</spectateDistanceOverride>
+        <endTriggers><li Class="StageEndTrigger_DurationPercentage"><percentage>0.33</percentage></li></endTriggers>
+        <roleBehaviors>
+          <li><roleId>cook</roleId><dutyDef>Idle</dutyDef></li>
+          <li><roleId>eater</roleId><dutyDef>Idle</dutyDef></li>
+        </roleBehaviors>
+      </li>
+      <li>
+        <defaultDuty>SpectateCircle</defaultDuty>
+        <spectateDistanceOverride>5~7</spectateDistanceOverride>
+        <endTriggers>
+          <li Class="StageEndTrigger_DurationPercentage"><percentage>1</percentage></li>
+          <li Class="StageEndTrigger_DuelEnded"><roleIds><li>cook</li><li>eater</li></roleIds></li>
+        </endTriggers>
+        <essential>true</essential>
+        <visualEffectDef>Duel</visualEffectDef>
+        <roleBehaviors>
+          <li>
+            <roleId>cook</roleId>
+            <dutyDef>WCTM_SingleCombatDuel</dutyDef>
+            <customPositions>
+              <li Class="WhoCookThisMeal.RitualPositionWCTMSide"><side>0</side></li>
+            </customPositions>
+          </li>
+          <li>
+            <roleId>eater</roleId>
+            <dutyDef>WCTM_SingleCombatDuel</dutyDef>
+            <customPositions>
+              <li Class="WhoCookThisMeal.RitualPositionWCTMSide"><side>1</side></li>
             </customPositions>
           </li>
         </roleBehaviors>

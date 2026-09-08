@@ -28,6 +28,11 @@ public sealed class JobGiver_WCTMSingleCombatMove : JobGiver_Wander
 
     protected override Job TryGiveJob(Pawn pawn)
     {
+        if (!WhoCookThisMealMod.Settings.PeacefulSingleCombat)
+        {
+            return JobGiver_WCTMOriginalDuel.GetJob(pawn);
+        }
+
         LordJob_Ritual ritual = pawn.GetLord()?.LordJob as LordJob_Ritual;
         if (ritual == null)
         {
@@ -116,6 +121,14 @@ public sealed class JobGiver_WCTMSingleCombatMove : JobGiver_Wander
 
         IntVec3 cell = center + new IntVec3(Mathf.RoundToInt(Mathf.Cos(angle) * radius), 0, Mathf.RoundToInt(Mathf.Sin(angle) * radius));
         return cell.InBounds(map) && cell.Standable(map) ? cell : center;
+    }
+
+    private sealed class JobGiver_WCTMOriginalDuel : JobGiver_Duel
+    {
+        public static Job GetJob(Pawn pawn)
+        {
+            return new JobGiver_WCTMOriginalDuel().TryGiveJob(pawn);
+        }
     }
 }
 
