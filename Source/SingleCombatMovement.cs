@@ -129,6 +129,29 @@ public sealed class JobGiver_WCTMSingleCombatMove : JobGiver_Wander
         {
             return new JobGiver_WCTMOriginalDuel().TryGiveJob(pawn);
         }
+
+        protected override Job TryGiveJob(Pawn pawn)
+        {
+            LordJob_WCTMSingleCombatDuel duel = pawn.GetLord()?.LordJob as LordJob_WCTMSingleCombatDuel;
+            if (duel == null || duel.IsDuelEnded)
+            {
+                return null;
+            }
+
+            return base.TryGiveJob(pawn);
+        }
+
+        protected override Job MeleeAttackJob(Pawn pawn, Thing enemyTarget)
+        {
+            Job job = base.MeleeAttackJob(pawn, enemyTarget);
+            if (WhoCookThisMealMod.Settings.BareFistedCombat)
+            {
+                job.verbToUse = pawn.verbTracker.AllVerbs.FirstOrDefault(verb =>
+                    verb.IsMeleeAttack && verb.EquipmentSource == null && verb.IsStillUsableBy(pawn));
+            }
+
+            return job;
+        }
     }
 }
 

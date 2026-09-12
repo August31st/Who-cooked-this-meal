@@ -19,8 +19,8 @@
 
   <HediffDef>
     <defName>WCTM_CookComa</defName>
-    <label>单挑昏迷</label>
-    <description>在单挑中落败后陷入的短暂昏迷。</description>
+    <label>Duel coma</label>
+    <description>A brief coma after losing the duel.</description>
     <hediffClass>HediffWithComps</hediffClass>
     <comps>
       <li Class="WhoCookThisMeal.HediffCompPropertiesWCTMCookComa">
@@ -30,8 +30,8 @@
   </HediffDef>
   <HediffDef>
     <defName>WCTM_EaterComa</defName>
-    <label>单挑昏迷</label>
-    <description>在单挑中落败后陷入的短暂昏迷。</description>
+    <label>Duel coma</label>
+    <description>A brief coma after losing the duel.</description>
     <hediffClass>HediffWithComps</hediffClass>
     <comps>
       <li Class="HediffCompProperties_Disappears">
@@ -41,8 +41,8 @@
   </HediffDef>
   <HediffDef>
     <defName>WCTM_CarefulCooking</defName>
-    <label>小心烹饪</label>
-    <description>制作的食物不会触发食物中毒。</description>
+    <label>Careful cooking</label>
+    <description>Meals made by this pawn cannot cause food poisoning.</description>
     <hediffClass>HediffWithComps</hediffClass>
     <comps>
       <li Class="HediffCompProperties_Disappears">
@@ -52,8 +52,8 @@
   </HediffDef>
   <HediffDef>
     <defName>WCTM_MechCookingUpgrade</defName>
-    <label>厨艺芯片超频</label>
-    <description>这台机械体的厨艺芯片已超频，制作的食物不会触发食物中毒。</description>
+    <label>Cooking chip overclock</label>
+    <description>This mechanoid's cooking chip is overclocked and prevents food poisoning.</description>
     <hediffClass>HediffWithComps</hediffClass>
     <comps>
       <li Class="HediffCompProperties_Disappears">
@@ -100,8 +100,8 @@
     <workerClass>WhoCookThisMeal.RitualBehaviorWorkerWCTMSingleCombat</workerClass>
     <durationTicks>5000~5000</durationTicks>
     <roles>
-      <li Class="WhoCookThisMeal.RitualRoleWCTMCook"><label>厨师</label><categoryLabel>厨师</categoryLabel><id>cook</id><required>true</required><maxCount>1</maxCount></li>
-      <li Class="WhoCookThisMeal.RitualRoleWCTMEater"><label>食客</label><categoryLabel>食客</categoryLabel><id>eater</id><required>true</required><maxCount>1</maxCount></li>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMCook"><label>Cook</label><categoryLabel>Cook</categoryLabel><id>cook</id><required>true</required><maxCount>1</maxCount></li>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMEater"><label>Eater</label><categoryLabel>Eater</categoryLabel><id>eater</id><required>true</required><maxCount>1</maxCount></li>
     </roles>
     <stages>
       <li>
@@ -132,16 +132,16 @@
         </roleBehaviors>
       </li>
     </stages>
-    <spectatorsLabel>旁观者</spectatorsLabel>
-    <spectatorGerund>观看单挑</spectatorGerund>
+    <spectatorsLabel>Spectators</spectatorsLabel>
+    <spectatorGerund>Watching the duel</spectatorGerund>
   </RitualBehaviorDef>
   <RitualBehaviorDef>
     <defName>WCTM_SingleCombatDuel</defName>
     <workerClass>WhoCookThisMeal.RitualBehaviorWorkerWCTMSingleCombat</workerClass>
     <durationTicks>5000~5000</durationTicks>
     <roles>
-      <li Class="WhoCookThisMeal.RitualRoleWCTMCook"><label>厨师</label><categoryLabel>厨师</categoryLabel><id>cook</id><required>true</required><maxCount>1</maxCount></li>
-      <li Class="WhoCookThisMeal.RitualRoleWCTMEater"><label>食客</label><categoryLabel>食客</categoryLabel><id>eater</id><required>true</required><maxCount>1</maxCount></li>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMCook"><label>Cook</label><categoryLabel>Cook</categoryLabel><id>cook</id><required>true</required><maxCount>1</maxCount></li>
+      <li Class="WhoCookThisMeal.RitualRoleWCTMEater"><label>Eater</label><categoryLabel>Eater</categoryLabel><id>eater</id><required>true</required><maxCount>1</maxCount></li>
     </roles>
     <stages>
       <li>
@@ -180,8 +180,8 @@
         </roleBehaviors>
       </li>
     </stages>
-    <spectatorsLabel>旁观者</spectatorsLabel>
-    <spectatorGerund>观看单挑</spectatorGerund>
+    <spectatorsLabel>Spectators</spectatorsLabel>
+    <spectatorGerund>Watching the duel</spectatorGerund>
   </RitualBehaviorDef>
   <RitualOutcomeEffectDef>
     <defName>WCTM_SingleCombat</defName>
@@ -189,13 +189,13 @@
     <comps>
       <li Class="RitualOutcomeComp_ParticipantCount"><label>participant count</label><curve><points><li>(1,0.07)</li><li>(4,0.22)</li><li>(7,0.33)</li><li>(10,0.4)</li></points></curve></li>
       <li Class="RitualOutcomeComp_RoomStat"><label>room impressiveness</label><statDef>Impressiveness</statDef><curve><points><li>(0,0)</li><li>(50,0.1)</li><li>(120,0.2)</li></points></curve></li>
-      <li Class="WhoCookThisMeal.RitualOutcomeCompWCTMSkillDifference"><label>格斗能力差值</label><curve><points><li>(0,0)</li><li>(1,0.4)</li></points></curve></li>
+      <li Class="WhoCookThisMeal.RitualOutcomeCompWCTMSkillDifference"><label>Melee skill difference</label></li>
     </comps>
     <outcomeChances>
-      <li><label>无趣的</label><chance>0.05</chance><positivityIndex>0</positivityIndex><memory>WCTM_SingleCombatBoring</memory></li>
-      <li><label>平淡的</label><chance>0.15</chance><positivityIndex>1</positivityIndex><memory>WCTM_SingleCombatPlain</memory></li>
-      <li><label>精彩的</label><chance>0.60</chance><positivityIndex>2</positivityIndex><memory>WCTM_SingleCombatExciting</memory></li>
-      <li><label>难忘的</label><chance>0.20</chance><positivityIndex>3</positivityIndex><memory>WCTM_SingleCombatUnforgettable</memory></li>
+      <li><label>Boring</label><chance>0.05</chance><positivityIndex>0</positivityIndex><memory>WCTM_SingleCombatBoring</memory></li>
+      <li><label>Plain</label><chance>0.15</chance><positivityIndex>1</positivityIndex><memory>WCTM_SingleCombatPlain</memory></li>
+      <li><label>Exciting</label><chance>0.60</chance><positivityIndex>2</positivityIndex><memory>WCTM_SingleCombatExciting</memory></li>
+      <li><label>Unforgettable</label><chance>0.20</chance><positivityIndex>3</positivityIndex><memory>WCTM_SingleCombatUnforgettable</memory></li>
     </outcomeChances>
   </RitualOutcomeEffectDef>
   <RitualPatternDef>
@@ -206,6 +206,6 @@
     <ritualOutcomeEffect>WCTM_SingleCombat</ritualOutcomeEffect>
   </RitualPatternDef>
   <PreceptDef>
-    <defName>WCTM_SingleCombat</defName><label>单挑</label><description>厨师和食客进行一场不造成战斗伤害的单挑。</description><issue>Ritual</issue><impact>Medium</impact><preceptClass>Precept_Ritual</preceptClass><ritualPatternBase>WCTM_SingleCombat</ritualPatternBase><useRepeatPenalty>false</useRepeatPenalty>
+    <defName>WCTM_SingleCombat</defName><label>Duel</label><description>The cook and eater engage in a harmless duel.</description><issue>Ritual</issue><impact>Medium</impact><preceptClass>Precept_Ritual</preceptClass><ritualPatternBase>WCTM_SingleCombat</ritualPatternBase><useRepeatPenalty>false</useRepeatPenalty>
   </PreceptDef>
 </Defs>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <WCTM_SingleCombat.comps.0.label>参与者数量</WCTM_SingleCombat.comps.0.label>
+  <WCTM_SingleCombat.comps.1.label>房间观感</WCTM_SingleCombat.comps.1.label>
+  <WCTM_SingleCombat.comps.2.label>格斗能力差值</WCTM_SingleCombat.comps.2.label>
+  <WCTM_SingleCombat.outcomeChances.0.label>无趣的</WCTM_SingleCombat.outcomeChances.0.label>
+  <WCTM_SingleCombat.outcomeChances.1.label>平淡的</WCTM_SingleCombat.outcomeChances.1.label>
+  <WCTM_SingleCombat.outcomeChances.2.label>精彩的</WCTM_SingleCombat.outcomeChances.2.label>
+  <WCTM_SingleCombat.outcomeChances.3.label>难忘的</WCTM_SingleCombat.outcomeChances.3.label>
+</LanguageData>

@@ -11,7 +11,6 @@ public sealed class WhoCookThisMealMod : Mod
 {
     public static WhoCookThisMealSettings Settings { get; private set; }
     private static readonly Dictionary<Thing, CookRecord> fallbackRecords = new Dictionary<Thing, CookRecord>();
-    private static readonly HashSet<IngestionRecord> poisonedMeals = new HashSet<IngestionRecord>();
     private static readonly HashSet<IngestionRecord> blockedPoisoning = new HashSet<IngestionRecord>();
 
     public WhoCookThisMealMod(ModContentPack content) : base(content)
@@ -38,6 +37,12 @@ public sealed class WhoCookThisMealMod : Mod
         harmony.Patch(
             AccessTools.Method(typeof(FoodUtility), nameof(FoodUtility.AddFoodPoisoningHediff)),
             prefix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(BlockPoisoningForCarefulCook)));
+        harmony.Patch(
+            AccessTools.Method(typeof(LordJob_Ritual_Duel), "StartMoving"),
+            postfix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(ConfigureDuelMovingStage)));
+        harmony.Patch(
+            AccessTools.Method(typeof(LordJob_Ritual_Duel), "StartAttacking"),
+            postfix: new HarmonyMethod(typeof(WhoCookThisMealMod), nameof(ConfigureDuelAttackStage)));
     }
 
     public override string SettingsCategory() => Content.Name;
@@ -47,12 +52,41 @@ public sealed class WhoCookThisMealMod : Mod
         Listing_Standard listing = new Listing_Standard();
         listing.Begin(inRect);
         bool peaceful = Settings.PeacefulSingleCombat;
-        listing.CheckboxLabeled("和平单挑", ref Settings.PeacefulSingleCombat, "取消勾选后使用原版决斗动作并造成真实战斗伤害。");
-        if (peaceful != Settings.PeacefulSingleCombat)
+        listing.CheckboxLabeled("WCTM_PeacefulSingleCombat".Translate(), ref Settings.PeacefulSingleCombat, "WCTM_PeacefulSingleCombatDescription".Translate());
+        bool bareFistedCombat = Settings.BareFistedCombat;
+        listing.CheckboxLabeled("WCTM_BareFistedCombat".Translate(), ref Settings.BareFistedCombat, "WCTM_BareFistedCombatDescription".Translate());
+        int oldAttacksPerStage = Settings.AttacksPerStage;
+        int oldMovingTicksPerStage = Settings.MovingTicksPerStage;
+        float attacksPerStage = Settings.AttacksPerStage;
+        listing.Label("WCTM_AttacksPerStage".Translate(Mathf.RoundToInt(attacksPerStage), 1, 20));
+        attacksPerStage = listing.Slider(attacksPerStage, 1f, 20f);
+        Settings.AttacksPerStage = Mathf.RoundToInt(attacksPerStage);
+        float movingTicksPerStage = Settings.MovingTicksPerStage;
+        listing.Label("WCTM_MovingTicksPerStage".Translate(Mathf.RoundToInt(movingTicksPerStage), 20, 600));
+        movingTicksPerStage = listing.Slider(movingTicksPerStage, 20f, 600f);
+        Settings.MovingTicksPerStage = Mathf.RoundToInt(movingTicksPerStage / 20f) * 20;
+        if (peaceful != Settings.PeacefulSingleCombat || bareFistedCombat != Settings.BareFistedCombat ||
+            oldAttacksPerStage != Settings.AttacksPerStage || oldMovingTicksPerStage != Settings.MovingTicksPerStage)
         {
             Settings.Write();
         }
         listing.End();
+    }
+
+    private static void ConfigureDuelMovingStage(LordJob_Ritual_Duel __instance)
+    {
+        if (__instance is LordJob_WCTMSingleCombatDuel)
+        {
+            AccessTools.Field(typeof(LordJob_Ritual_Duel), "movingTicks").SetValue(__instance, Mathf.Clamp(Settings.MovingTicksPerStage, 20, 600));
+        }
+    }
+
+    private static void ConfigureDuelAttackStage(LordJob_Ritual_Duel __instance)
+    {
+        if (__instance is LordJob_WCTMSingleCombatDuel)
+        {
+            AccessTools.Field(typeof(LordJob_Ritual_Duel), "attacksThisStage").SetValue(__instance, Mathf.Clamp(Settings.AttacksPerStage, 1, 20));
+        }
     }
 
     private static void EnsureMealComponent(ThingWithComps __instance)
@@ -117,7 +151,7 @@ public sealed class WhoCookThisMealMod : Mod
 
         if (TryGetMealCook(ingestible, pawn, out _))
         {
-            poisonedMeals.Add(new IngestionRecord(pawn, ingestible));
+            RecordPoisoningOpinion(pawn, ingestible);
         }
     }
 
@@ -155,20 +189,36 @@ public sealed class WhoCookThisMealMod : Mod
             return;
         }
 
-        bool poisoned = poisonedMeals.Remove(new IngestionRecord(ingester, __instance));
         if (cook.IsColonyMech)
         {
-            if (poisoned)
-            {
-                ResolveMechPoisoning(cook, ingester);
-            }
-
             return;
         }
 
-        string thoughtName = poisoned ? "WCTM_UnqualifiedCook" : "WCTM_MadeDeliciousFood";
-        ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail(thoughtName);
-        ingester.needs?.mood?.thoughts?.memories.TryGainMemory(thoughtDef, cook);
+        ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_MadeDeliciousFood");
+        if (thoughtDef != null)
+        {
+            ingester.needs?.mood?.thoughts?.memories.TryGainMemory(thoughtDef, cook);
+        }
+    }
+
+    private static void RecordPoisoningOpinion(Pawn ingester, Thing meal)
+    {
+        if (!TryGetMealCook(meal, ingester, out Pawn cook))
+        {
+            return;
+        }
+
+        if (cook.IsColonyMech)
+        {
+            ResolveMechPoisoning(cook, ingester);
+            return;
+        }
+
+        ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("WCTM_UnqualifiedCook");
+        if (thoughtDef != null)
+        {
+            ingester.needs?.mood?.thoughts?.memories.TryGainMemory(thoughtDef, cook);
+        }
     }
 
     private static void ResolveMechPoisoning(Pawn mech, Pawn ingester)

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <WCTM_SingleCombat.roles.0.label>厨师</WCTM_SingleCombat.roles.0.label>
+  <WCTM_SingleCombat.roles.0.categoryLabel>厨师</WCTM_SingleCombat.roles.0.categoryLabel>
+  <WCTM_SingleCombat.roles.1.label>食客</WCTM_SingleCombat.roles.1.label>
+  <WCTM_SingleCombat.roles.1.categoryLabel>食客</WCTM_SingleCombat.roles.1.categoryLabel>
+  <WCTM_SingleCombat.spectatorsLabel>旁观者</WCTM_SingleCombat.spectatorsLabel>
+  <WCTM_SingleCombat.spectatorGerund>观看单挑</WCTM_SingleCombat.spectatorGerund>
+  <WCTM_SingleCombatDuel.roles.0.label>厨师</WCTM_SingleCombatDuel.roles.0.label>
+  <WCTM_SingleCombatDuel.roles.0.categoryLabel>厨师</WCTM_SingleCombatDuel.roles.0.categoryLabel>
+  <WCTM_SingleCombatDuel.roles.1.label>食客</WCTM_SingleCombatDuel.roles.1.label>
+  <WCTM_SingleCombatDuel.roles.1.categoryLabel>食客</WCTM_SingleCombatDuel.roles.1.categoryLabel>
+  <WCTM_SingleCombatDuel.spectatorsLabel>旁观者</WCTM_SingleCombatDuel.spectatorsLabel>
+  <WCTM_SingleCombatDuel.spectatorGerund>观看单挑</WCTM_SingleCombatDuel.spectatorGerund>
+</LanguageData>

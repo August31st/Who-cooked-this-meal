@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <WCTM_CookComa.label>单挑昏迷</WCTM_CookComa.label>
+  <WCTM_CookComa.description>在单挑中落败后陷入的短暂昏迷。</WCTM_CookComa.description>
+  <WCTM_EaterComa.label>单挑昏迷</WCTM_EaterComa.label>
+  <WCTM_EaterComa.description>在单挑中落败后陷入的短暂昏迷。</WCTM_EaterComa.description>
+  <WCTM_CarefulCooking.label>小心烹饪</WCTM_CarefulCooking.label>
+  <WCTM_CarefulCooking.description>制作的食物不会触发食物中毒。</WCTM_CarefulCooking.description>
+  <WCTM_MechCookingUpgrade.label>厨艺芯片超频</WCTM_MechCookingUpgrade.label>
+  <WCTM_MechCookingUpgrade.description>这台机械体的厨艺芯片已超频，制作的食物不会触发食物中毒。</WCTM_MechCookingUpgrade.description>
+</LanguageData>

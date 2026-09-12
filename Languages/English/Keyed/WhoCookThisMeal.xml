@@ -10,4 +10,41 @@
   <WCTM_SingleCombatDraw>Draw.</WCTM_SingleCombatDraw>
   <WCTM_Cook>Cook</WCTM_Cook>
   <WCTM_Eater>Eater</WCTM_Eater>
+  <WCTM_CookComaLabel>Duel coma</WCTM_CookComaLabel>
+  <WCTM_CookComaDescription>A brief coma after losing the duel.</WCTM_CookComaDescription>
+  <WCTM_EaterComaLabel>Duel coma</WCTM_EaterComaLabel>
+  <WCTM_EaterComaDescription>A brief coma after losing the duel.</WCTM_EaterComaDescription>
+  <WCTM_CarefulCookingLabel>Careful cooking</WCTM_CarefulCookingLabel>
+  <WCTM_CarefulCookingDescription>Meals made by this pawn cannot cause food poisoning.</WCTM_CarefulCookingDescription>
+  <WCTM_MechCookingUpgradeLabel>Cooking chip overclock</WCTM_MechCookingUpgradeLabel>
+  <WCTM_MechCookingUpgradeDescription>This mechanoid's cooking chip is overclocked and prevents food poisoning.</WCTM_MechCookingUpgradeDescription>
+  <WCTM_Spectators>Spectators</WCTM_Spectators>
+  <WCTM_SpectatingSingleCombat>Watching the duel</WCTM_SpectatingSingleCombat>
+  <WCTM_MeleeSkillDifference>Melee skill difference</WCTM_MeleeSkillDifference>
+  <WCTM_SingleCombatBoringLabel>Boring</WCTM_SingleCombatBoringLabel>
+  <WCTM_SingleCombatBoringDescription>What a boring spectacle. I wanted to see blood!</WCTM_SingleCombatBoringDescription>
+  <WCTM_SingleCombatPlainLabel>Plain</WCTM_SingleCombatPlainLabel>
+  <WCTM_SingleCombatPlainDescription>Is that all?</WCTM_SingleCombatPlainDescription>
+  <WCTM_SingleCombatExcitingLabel>Exciting</WCTM_SingleCombatExcitingLabel>
+  <WCTM_SingleCombatExcitingDescription>Now that was something!</WCTM_SingleCombatExcitingDescription>
+  <WCTM_SingleCombatUnforgettableLabel>Unforgettable</WCTM_SingleCombatUnforgettableLabel>
+  <WCTM_SingleCombatUnforgettableDescription>I may never forget this.</WCTM_SingleCombatUnforgettableDescription>
+  <WCTM_ChefLostLabel>What's for dinner?</WCTM_ChefLostLabel>
+  <WCTM_ChefLostDescription>The cook lost. What are we going to eat?</WCTM_ChefLostDescription>
+  <WCTM_SingleCombatFullMealLabel>Full meal</WCTM_SingleCombatFullMealLabel>
+  <WCTM_SingleCombatFullMealDescription>Thanks for the meal.</WCTM_SingleCombatFullMealDescription>
+  <WCTM_EaterLostLabel>Humiliation</WCTM_EaterLostLabel>
+  <WCTM_EaterLostDescription>I brought this humiliation on myself.</WCTM_EaterLostDescription>
+  <WCTM_SingleCombatLabel>Duel</WCTM_SingleCombatLabel>
+  <WCTM_SingleCombatDescription>The cook and eater engage in a harmless duel.</WCTM_SingleCombatDescription>
+  <WCTM_MadeDeliciousFoodThought>So fresh, so delicious.</WCTM_MadeDeliciousFoodThought>
+  <WCTM_UnqualifiedCookThought>Hey, you seem to enjoy cooking badly.</WCTM_UnqualifiedCookThought>
+  <WCTM_MechMealPoisoningThought>Your mechanoid's food is poisonous!</WCTM_MechMealPoisoningThought>
+  <WCTM_PeacefulSingleCombat>Peaceful duel</WCTM_PeacefulSingleCombat>
+  <WCTM_PeacefulSingleCombatDescription>Uncheck to use vanilla duel actions and deal real combat damage.</WCTM_PeacefulSingleCombatDescription>
+  <WCTM_BareFistedCombat>Bare-fisted combat</WCTM_BareFistedCombat>
+  <WCTM_BareFistedCombatDescription>Forces non-peaceful duels to use unarmed attacks.</WCTM_BareFistedCombatDescription>
+  <WCTM_AttacksPerStage>Attacks per attack phase: {0} (range: {1}-{2})</WCTM_AttacksPerStage>
+  <WCTM_MovingTicksPerStage>Moving phase duration: {0} ticks (range: {1}-{2}, 20-tick steps)</WCTM_MovingTicksPerStage>
+  <WCTM_MeleeSkillDifferenceImpact>Melee skill difference: {0}; ritual quality impact: +{1}</WCTM_MeleeSkillDifferenceImpact>
 </LanguageData>

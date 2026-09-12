@@ -77,9 +77,9 @@ public sealed class RitualBehaviorWorkerWCTMSingleCombat : RitualBehaviorWorker
 
 public sealed class RitualOutcomeCompWCTMSkillDifference : RitualOutcomeComp_Quality
 {
-    public override float Count(LordJob_Ritual ritual, RitualOutcomeComp_Data data) => 0f;
+    public override bool DataRequired => false;
 
-    public override float QualityOffset(LordJob_Ritual ritual, RitualOutcomeComp_Data data)
+    public override float Count(LordJob_Ritual ritual, RitualOutcomeComp_Data data)
     {
         Pawn cook = GetAssignedPawn(ritual, "cook");
         Pawn eater = GetAssignedPawn(ritual, "eater");
@@ -88,8 +88,52 @@ public sealed class RitualOutcomeCompWCTMSkillDifference : RitualOutcomeComp_Qua
             return 0f;
         }
 
+        return Mathf.Abs(cook.skills.GetSkill(SkillDefOf.Melee).Level - eater.skills.GetSkill(SkillDefOf.Melee).Level);
+    }
+
+    public override float QualityOffset(LordJob_Ritual ritual, RitualOutcomeComp_Data data)
+    {
+        return FixedQualityOffset(Count(ritual, data));
+    }
+
+    public override QualityFactor GetQualityFactor(Precept_Ritual ritual, TargetInfo ritualTarget, RitualObligation obligation, RitualRoleAssignments assignments, RitualOutcomeComp_Data data)
+    {
+        Pawn cook = assignments?.FirstAssignedPawn(assignments.GetRole("cook"));
+        Pawn eater = assignments?.FirstAssignedPawn(assignments.GetRole("eater"));
+        if (cook?.skills == null || eater?.skills == null)
+        {
+            return null;
+        }
+
         int difference = Mathf.Abs(cook.skills.GetSkill(SkillDefOf.Melee).Level - eater.skills.GetSkill(SkillDefOf.Melee).Level);
-        return difference <= 1 ? 0.4f : difference <= 4 ? 0.3f : difference <= 8 ? 0.2f : 0f;
+        float quality = FixedQualityOffset(difference);
+        return new QualityFactor
+        {
+            label = label,
+            count = difference.ToString(),
+            qualityChange = Mathf.Abs(quality) > float.Epsilon
+                ? "OutcomeBonusDesc_QualitySingleOffset".Translate(quality.ToStringWithSign("0.#%")).Resolve()
+                : " - ",
+            positive = quality >= 0f,
+            quality = quality,
+            priority = 0f
+        };
+    }
+
+    public override string GetDesc(LordJob_Ritual ritual = null, RitualOutcomeComp_Data data = null)
+    {
+        if (ritual == null)
+        {
+            return label;
+        }
+
+        return Count(ritual, data).ToString() + " " + label + ": " +
+            "OutcomeBonusDesc_QualitySingleOffset".Translate(FixedQualityOffset(Count(ritual, data)).ToStringWithSign("0.#%")) + ".";
+    }
+
+    private static float FixedQualityOffset(float difference)
+    {
+        return difference <= 1f ? 0.4f : difference <= 4f ? 0.3f : difference <= 8f ? 0.1f : 0f;
     }
 
     internal static Pawn GetAssignedPawn(LordJob_Ritual ritual, string roleId)
@@ -103,6 +147,22 @@ public sealed class RitualOutcomeEffectWorkerWCTMSingleCombat : RitualOutcomeEff
 {
     public RitualOutcomeEffectWorkerWCTMSingleCombat() { }
     public RitualOutcomeEffectWorkerWCTMSingleCombat(RitualOutcomeEffectDef def) : base(def) { }
+
+    public override string OutcomeQualityBreakdownDesc(float quality, float progress, LordJob_Ritual jobRitual)
+    {
+        string result = base.OutcomeQualityBreakdownDesc(quality, progress, jobRitual);
+        Pawn cook = RitualOutcomeCompWCTMSkillDifference.GetAssignedPawn(jobRitual, "cook");
+        Pawn eater = RitualOutcomeCompWCTMSkillDifference.GetAssignedPawn(jobRitual, "eater");
+        if (cook?.skills != null && eater?.skills != null &&
+            !result.Contains("Melee skill difference") && !result.Contains("格斗能力差值"))
+        {
+            int difference = Mathf.Abs(cook.skills.GetSkill(SkillDefOf.Melee).Level - eater.skills.GetSkill(SkillDefOf.Melee).Level);
+            float offset = difference <= 1 ? 0.4f : difference <= 4 ? 0.3f : difference <= 8 ? 0.1f : 0f;
+            result += "\n  - " + "WCTM_MeleeSkillDifferenceImpact".Translate(difference, offset.ToStringPercent()).Resolve();
+        }
+
+        return result;
+    }
 
     public override RitualOutcomePossibility GetOutcome(float quality, LordJob_Ritual ritual)
     {
@@ -193,8 +253,8 @@ public sealed class JobGiver_WCTMSafeDuel : JobGiver_Duel
 {
     protected override Job TryGiveJob(Pawn pawn)
     {
-        LordJob_Ritual_Duel duel = pawn.GetLord()?.LordJob as LordJob_Ritual_Duel;
-        if (duel == null || duel.Opponent(pawn)?.DeadOrDowned == true)
+        LordJob_WCTMSingleCombatDuel duel = pawn.GetLord()?.LordJob as LordJob_WCTMSingleCombatDuel;
+        if (duel == null || duel.IsDuelEnded || duel.Opponent(pawn)?.DeadOrDowned == true)
         {
             return null;
         }
@@ -213,6 +273,8 @@ public sealed class JobGiver_WCTMSafeDuel : JobGiver_Duel
 public sealed class LordJob_WCTMSingleCombatDuel : LordJob_Ritual_Duel
 {
     public LordJob_WCTMSingleCombatDuel() { }
+
+    public bool IsDuelEnded => ended;
 
     public LordJob_WCTMSingleCombatDuel(TargetInfo selectedTarget, Precept_Ritual ritual, RitualObligation obligation, List<RitualStage> allStages, RitualRoleAssignments assignments, Pawn organizer = null)
         : base(selectedTarget, ritual, obligation, allStages, assignments, null)
@@ -267,6 +329,20 @@ public sealed class LordJob_WCTMSingleCombatDuel : LordJob_Ritual_Duel
         }
 
         return base.RitualFinished(progress, cancelled);
+    }
+
+    public override void ApplyOutcome(float progress, bool showFinishedMessage = true, bool showFailedMessage = true, bool cancelled = false)
+    {
+        base.ApplyOutcome(progress, showFinishedMessage, showFailedMessage, cancelled);
+        if (!IsDuelEnded)
+        {
+            return;
+        }
+
+        foreach (Pawn pawn in duelists)
+        {
+            pawn.jobs?.CheckForJobOverride(0f, true);
+        }
     }
 }
 

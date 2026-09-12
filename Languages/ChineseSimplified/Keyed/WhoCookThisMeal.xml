@@ -10,4 +10,41 @@
   <WCTM_SingleCombatDraw>双方平手。</WCTM_SingleCombatDraw>
   <WCTM_Cook>厨师</WCTM_Cook>
   <WCTM_Eater>食客</WCTM_Eater>
+  <WCTM_CookComaLabel>单挑昏迷</WCTM_CookComaLabel>
+  <WCTM_CookComaDescription>在单挑中落败后陷入的短暂昏迷。</WCTM_CookComaDescription>
+  <WCTM_EaterComaLabel>单挑昏迷</WCTM_EaterComaLabel>
+  <WCTM_EaterComaDescription>在单挑中落败后陷入的短暂昏迷。</WCTM_EaterComaDescription>
+  <WCTM_CarefulCookingLabel>小心烹饪</WCTM_CarefulCookingLabel>
+  <WCTM_CarefulCookingDescription>制作的食物不会触发食物中毒。</WCTM_CarefulCookingDescription>
+  <WCTM_MechCookingUpgradeLabel>厨艺芯片超频</WCTM_MechCookingUpgradeLabel>
+  <WCTM_MechCookingUpgradeDescription>这台机械体的厨艺芯片已超频，制作的食物不会触发食物中毒。</WCTM_MechCookingUpgradeDescription>
+  <WCTM_Spectators>旁观者</WCTM_Spectators>
+  <WCTM_SpectatingSingleCombat>观看单挑</WCTM_SpectatingSingleCombat>
+  <WCTM_MeleeSkillDifference>格斗能力差值</WCTM_MeleeSkillDifference>
+  <WCTM_SingleCombatBoringLabel>无趣的</WCTM_SingleCombatBoringLabel>
+  <WCTM_SingleCombatBoringDescription>无聊的儿戏，我要看到血流成河！</WCTM_SingleCombatBoringDescription>
+  <WCTM_SingleCombatPlainLabel>平淡的</WCTM_SingleCombatPlainLabel>
+  <WCTM_SingleCombatPlainDescription>这样就结束了吗</WCTM_SingleCombatPlainDescription>
+  <WCTM_SingleCombatExcitingLabel>精彩的</WCTM_SingleCombatExcitingLabel>
+  <WCTM_SingleCombatExcitingDescription>劲啊，这才是我要的口牙！</WCTM_SingleCombatExcitingDescription>
+  <WCTM_SingleCombatUnforgettableLabel>难忘的</WCTM_SingleCombatUnforgettableLabel>
+  <WCTM_SingleCombatUnforgettableDescription>我大概，永远不会忘记你们吧。</WCTM_SingleCombatUnforgettableDescription>
+  <WCTM_ChefLostLabel>吃什么</WCTM_ChefLostLabel>
+  <WCTM_ChefLostDescription>厨师输了我们吃什么</WCTM_ChefLostDescription>
+  <WCTM_SingleCombatFullMealLabel>我吃饱了</WCTM_SingleCombatFullMealLabel>
+  <WCTM_SingleCombatFullMealDescription>多谢款待</WCTM_SingleCombatFullMealDescription>
+  <WCTM_EaterLostLabel>耻辱</WCTM_EaterLostLabel>
+  <WCTM_EaterLostDescription>自取其辱了</WCTM_EaterLostDescription>
+  <WCTM_SingleCombatLabel>单挑</WCTM_SingleCombatLabel>
+  <WCTM_SingleCombatDescription>厨师和食客进行一场不造成战斗伤害的单挑。</WCTM_SingleCombatDescription>
+  <WCTM_MadeDeliciousFoodThought>非常的新鲜 非常的美味</WCTM_MadeDeliciousFoodThought>
+  <WCTM_UnqualifiedCookThought>喂，你这家伙做饭做的挺开心嘛</WCTM_UnqualifiedCookThought>
+  <WCTM_MechMealPoisoningThought>你的机械体做的饭有毒！</WCTM_MechMealPoisoningThought>
+  <WCTM_PeacefulSingleCombat>和平单挑</WCTM_PeacefulSingleCombat>
+  <WCTM_PeacefulSingleCombatDescription>取消勾选后使用原版决斗动作并造成真实战斗伤害。</WCTM_PeacefulSingleCombatDescription>
+  <WCTM_BareFistedCombat>赤手空拳</WCTM_BareFistedCombat>
+  <WCTM_BareFistedCombatDescription>启用后，非和平决斗固定使用空手攻击。</WCTM_BareFistedCombatDescription>
+  <WCTM_AttacksPerStage>每个攻击阶段的攻击次数：{0}（范围：{1}-{2}）</WCTM_AttacksPerStage>
+  <WCTM_MovingTicksPerStage>每个移动阶段的时长：{0} ticks（范围：{1}-{2}，每20 ticks调整）</WCTM_MovingTicksPerStage>
+  <WCTM_MeleeSkillDifferenceImpact>格斗能力差值：{0}，仪式质量影响：+{1}</WCTM_MeleeSkillDifferenceImpact>
 </LanguageData>
